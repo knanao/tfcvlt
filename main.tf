@@ -50,6 +50,12 @@ resource "google_kms_crypto_key" "vault-seal" {
   key_ring = google_kms_key_ring.vault-server.id
 }
 
+resource "google_kms_crypto_key_iam_member" "vault-seal" {
+  crypto_key_id = google_kms_crypto_key.vault-seal.id
+  role          = "roles/cloudkms.cryptoKeyEncrypter"
+  member        = "serviceAccount:${google_service_account.vault-server.email}"
+}
+
 resource "google_cloud_run_service" "vault-server" {
   name     = "vault-server"
   location = var.gcp_region
@@ -111,5 +117,9 @@ resource "google_cloud_run_service" "vault-server" {
   traffic {
     percent         = 100
     latest_revision = true
+  }
+
+  lifecycle {
+    ignore_changes = all
   }
 }
