@@ -49,3 +49,59 @@ resource "google_kms_crypto_key" "vault-seal" {
   name     = "vault-seal"
   key_ring = google_kms_key_ring.vault-server.id
 }
+
+resource "google_cloud_run_service" "vault-server" {
+  name     = "vault-server"
+  location = var.gcp_region
+
+  template {
+    spec {
+      container_concurrency = 80
+      timeout_seconds       = 300
+      service_account_name  = google_service_account.vault-server.email
+
+      containers {
+        image = "gcr.io/hightowerlabs/vault:1.7.1"
+
+        resources {
+          limits = {
+            cpu    = "1000m"
+            memory = "2Gi"
+          }
+        }
+
+        ports {
+          container_port = 8200
+        }
+
+        env {
+          name  = "GOOGLE_PROJECT"
+          value = var.gcp_project
+        }
+
+        env {
+          name  = "GOOGLE_STORAGE_BUCKET"
+          value = google_storage_bucket.vault-data.name
+        }
+
+        volume_mounts {
+          mount_path = "/etc/vault/config.hcl"
+          name       = "${google_secret_manager_secret.vault-server-config.secret_id}:latest"
+        }
+      }
+    }
+
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/maxScale"  = 1
+        "autoscaling.knative.dev/minScale"  = 1
+        "run.googleapis.com/cpu-throttling" = false
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
