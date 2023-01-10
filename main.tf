@@ -10,7 +10,7 @@ resource "google_service_account" "vault-server" {
 }
 
 resource "google_storage_bucket" "vault-data" {
-  name     = "vault-data"
+  name     = "${var.gcp_project}-vault-data"
   location = var.gcp_region
 }
 
