@@ -86,7 +86,7 @@ resource "google_cloud_run_service" "vault-server" {
 
         volume_mounts {
           mount_path = "/etc/vault/config.hcl"
-          name       = "${google_secret_manager_secret.vault-server-config.secret_id}:latest"
+          name       = google_secret_manager_secret.vault-server-config.secret_id
         }
       }
     }
