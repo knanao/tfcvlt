@@ -130,19 +130,11 @@ resource "google_cloud_run_service" "vault-server" {
 }
 
 ## NOTE: You should not make vault-server public before initilizing it.
-data "google_iam_policy" "noauth" {
-  binding {
-    role = "roles/run.invoker"
-    members = [
-      "allUsers",
-    ]
-  }
-}
-
-resource "google_cloud_run_service_iam_policy" "noauth" {
+resource "google_cloud_run_service_iam_binding" "noauth" {
   location = google_cloud_run_service.vault-server.location
-  project  = google_cloud_run_service.vault-server.project
   service  = google_cloud_run_service.vault-server.name
-
-  policy_data = data.google_iam_policy.noauth.policy_data
+  role     = "roles/run.invoker"
+  members = [
+    "allUsers"
+  ]
 }
