@@ -9,9 +9,10 @@ listener "tcp" {
 }
 
 seal "gcpckms" {
-  key_ring   = "vault-server"
-  crypto_key = "seal"
-  region     = "global"
+  project     = "knanao"
+  key_ring    = "vault-server"
+  crypto_key  = "vault-seal"
+  region      = "global"
 }
 
 storage "gcs" {
