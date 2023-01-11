@@ -15,3 +15,7 @@ push:
 deploy: build push
 deploy:
 	@echo Done!
+
+.PHONY: replace
+replace:
+	gcloud run services replace vault.yaml
