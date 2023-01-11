@@ -19,3 +19,11 @@ deploy:
 .PHONY: replace
 replace:
 	gcloud run services replace vault.yaml
+
+.PHONY: plan
+plan:
+	terraform -chdir=infra plan
+
+.PHONY: apply
+apply:
+	terraform -chdir=infra apply
