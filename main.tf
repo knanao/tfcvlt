@@ -56,6 +56,12 @@ resource "google_kms_crypto_key_iam_member" "vault-seal" {
   member        = "serviceAccount:${google_service_account.vault-server.email}"
 }
 
+resource "google_kms_crypto_key_iam_member" "vault-seal-admin" {
+  crypto_key_id = google_kms_crypto_key.vault-seal.id
+  role          = "roles/cloudkms.admin"
+  member        = "serviceAccount:${google_service_account.vault-server.email}"
+}
+
 resource "google_cloud_run_service" "vault-server" {
   name     = "vault-server"
   location = var.gcp_region
