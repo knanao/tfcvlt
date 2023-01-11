@@ -52,7 +52,7 @@ resource "google_kms_crypto_key" "vault-seal" {
 
 resource "google_kms_crypto_key_iam_member" "vault-seal" {
   crypto_key_id = google_kms_crypto_key.vault-seal.id
-  role          = "roles/cloudkms.cryptoKeyEncrypter"
+  role          = "roles/cloudkms.cryptoOperator"
   member        = "serviceAccount:${google_service_account.vault-server.email}"
 }
 
@@ -120,6 +120,11 @@ resource "google_cloud_run_service" "vault-server" {
   }
 
   lifecycle {
-    ignore_changes = all
+    ignore_changes = [
+      traffic,
+      template,
+      metadata,
+      status,
+    ]
   }
 }
