@@ -120,6 +120,11 @@ resource "google_cloud_run_service" "vault-server" {
   }
 
   lifecycle {
-    ignore_changes = all
+    ignore_changes = [
+      traffic,
+      template,
+      metadata,
+      status,
+    ]
   }
 }
