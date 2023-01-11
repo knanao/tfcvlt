@@ -73,7 +73,11 @@ resource "google_cloud_run_service" "vault-server" {
       service_account_name  = google_service_account.vault-server.email
 
       containers {
-        image = "gcr.io/hightowerlabs/vault:1.7.1"
+        image = "asia.gcr.io/knanao/vault:v1.12.2"
+        args = [
+          "server",
+          "-config=/etc/vault/config.hcl",
+        ]
 
         resources {
           limits = {
@@ -94,6 +98,11 @@ resource "google_cloud_run_service" "vault-server" {
         env {
           name  = "GOOGLE_STORAGE_BUCKET"
           value = google_storage_bucket.vault-data.name
+        }
+
+        env {
+          name  = "SKIP_SETCAP"
+          value = 1
         }
 
         volume_mounts {
