@@ -20,10 +20,25 @@ deploy:
 replace:
 	gcloud run services replace vault.yaml
 
+.PHONY: init
+init:
+	terraform -chdir=infra init
+
+.PHONY: fmt
+fmt: FLAGS ?=
+fmt:
+	terraform -chdir=infra fmt $(FLAGS)
+
+.PHONY: validate
+validate: FLAGS ?= 
+validate:
+	terraform validate $(FLAGS)
 .PHONY: plan
+plan: FLAGS ?=
 plan:
-	terraform -chdir=infra plan
+	terraform -chdir=infra plan $(FLAGS)
 
 .PHONY: apply
+apply: FLAGS ?=
 apply:
-	terraform -chdir=infra apply
+	terraform -chdir=infra apply $(FLAGS)
