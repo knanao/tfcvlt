@@ -2,9 +2,13 @@ name: "terraform"
 
 on:
   push:
+    paths:
+      - infra/**
     branches:
       - main
   pull_request:
+    paths:
+      - infra/**
 
 jobs:
   terraform:
@@ -20,20 +24,20 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: FLAGS=-check make fmt
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: make init
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: FLAGS=-no-color make validate
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: FLAGS="-no-color -input=false" make plan
         continue-on-error: true
 
       - uses: actions/github-script@v6
@@ -66,4 +70,4 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        run: FLAGS="-auto-approve -input=false" make apply
