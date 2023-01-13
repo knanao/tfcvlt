@@ -1,3 +1,6 @@
+# This is used for the first deployment as a default value, which means this resource is
+# ignored by the Terraform's state file after applying.
+# Regarding continuous delivery, it will be realized by Waypoint.
 resource "google_cloud_run_service" "vault-server" {
   name     = "vault-server"
   location = var.gcp_region

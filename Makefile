@@ -33,6 +33,7 @@ fmt:
 validate: FLAGS ?= 
 validate:
 	terraform validate $(FLAGS)
+
 .PHONY: plan
 plan: FLAGS ?=
 plan:
