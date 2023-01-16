@@ -1,15 +1,15 @@
 NAME := asia.gcr.io/knanao/vault
-VERSION := v1.12.2
+VERSION := 1.12.2
 
 .PHONY: build
 build:
 	docker build -t ${NAME}:${VERSION} \
 	--progress=plain  \
-	--build-arg VAULT_VERSION=${VERSION} .
+	--build-arg VAULT_VERSION=${VERSION} vault-server
 	
 .PHONY: push
 push:
-	docker push ${NAME}:${VERSION}
+	docker push ${NAME}:v${VERSION}
 
 .PHONY: deploy
 deploy: build push
@@ -18,7 +18,7 @@ deploy:
 
 .PHONY: replace
 replace:
-	gcloud run services replace vault.yaml
+	gcloud run services replace vault-server/service.yaml
 
 .PHONY: init
 init:
@@ -32,7 +32,7 @@ fmt:
 .PHONY: validate
 validate: FLAGS ?= 
 validate:
-	terraform validate $(FLAGS)
+	terraform -chdir=infra validate $(FLAGS)
 
 .PHONY: plan
 plan: FLAGS ?=
