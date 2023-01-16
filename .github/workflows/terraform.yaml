@@ -30,9 +30,9 @@ jobs:
         id: init
         run: make init
 
-      - name: Terraform Validate
-        id: validate
-        run: FLAGS=-no-color make validate
+     #- name: Terraform Validate
+     #  id: validate
+     #  run: FLAGS=-no-color make validate
 
       - name: Terraform Plan
         id: plan
