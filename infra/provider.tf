@@ -7,6 +7,12 @@ provider "google" {
   # credentials = data.external.credentials.result["credentials"]
 }
 
+provider "google-beta" {
+  project     = var.gcp_project
+  region      = var.gcp_region
+  credentials = base64decode(data.vault_generic_secret.terraform.data["private_key_data"])
+}
+
 data "vault_generic_secret" "terraform" {
   path = "gcp/key/terraform"
 }
@@ -25,3 +31,7 @@ provider "vault" {
     }
   }
 }
+
+# provider "waypoint" {
+#   token = var.waypoint_token
+# }

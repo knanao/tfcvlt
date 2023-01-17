@@ -14,3 +14,18 @@ resource "google_project_iam_member" "vault-server" {
   member  = "serviceAccount:${google_service_account.vault-server.email}"
   role    = each.key
 }
+
+# resource "google_service_account" "waypoint-runner" {
+#   account_id   = "waypoint-runner"
+#   display_name = "waypoint-runner"
+# }
+# 
+# resource "google_project_iam_member" "waypoint-runner" {
+#   for_each = toset([
+#     "roles/storage.objectAdmin"
+#   ])
+# 
+#   project = var.gcp_project
+#   member  = "serviceAccount:${google_service_account.waypoint-runner.email}"
+#   role    = each.key
+# }

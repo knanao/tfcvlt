@@ -13,9 +13,19 @@ terraform {
       version = "~> 4.47.0"
     }
 
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "~> 4.48.0"
+    }
+
     vault = {
       source  = "hashicorp/vault"
       version = "3.12.0"
+    }
+
+    waypoint = {
+      source  = "hashicorp-dev-advocates/waypoint"
+      version = "0.3.0"
     }
   }
 
