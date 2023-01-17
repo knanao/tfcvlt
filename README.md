@@ -1,7 +1,7 @@
 # tfcvlt
 This is a demonstration to enable dynamic secrets with [Terraform Cloud](https://cloud.hashicorp.com/products/terraform) and [Vault OSS](https://www.vaultproject.io/) on [Cloud Run](https://cloud.google.com/run).
 
-![Architecture Overview](src/architecture-overview.png)
+![Architecture Overview](public/architecture-overview.png)
 
 ## Challenge
 Terraform is widely used by a lot of developers to manage public cloud resources such as AWS, GCP and Azure.
@@ -26,7 +26,7 @@ This means these are automatically revoked when they are no longer used.
 By making those credentials short-lived, you reduce the chance that they might be compromised.
 If Terraform's state file was compromised, the credentials used by the terraform can be revoked rather than changing more global sets of credentials.
 
-![Dynamic Secret Flow](src/dynamic-secret.png)
+![Dynamic Secret Flow](public/dynamic-secret.png)
 
 Moreover, Terraform will not output the secrets used for the Vault authentication into your state file.
 This means Approle's role_id and secret_id are not exposed to and it's provided easily by using Terraform secure variable store.
