@@ -6,3 +6,6 @@
 
 # tfstate file
 *.tfstate
+
+# ds store
+.DS_Store
