@@ -1,5 +1,5 @@
 # .terraform dirs
-*/.terraform/*
+**/.terraform/*
 
 # lock file
 *.terraform.lock.hcl
@@ -9,3 +9,6 @@
 
 # ds store
 .DS_Store
+
+# secret
+.secrets

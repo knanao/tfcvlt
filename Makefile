@@ -1,11 +1,13 @@
 NAME := asia.gcr.io/knanao/vault
 VERSION := 1.12.2
+WORKSPACE ?= dev
+FLAGS ?=
 
 .PHONY: build
 build:
 	docker build -t ${NAME}:${VERSION} \
 	--progress=plain  \
-	--build-arg VAULT_VERSION=${VERSION} vault-server
+	--build-arg VAULT_VERSION=${VERSION} infra/vault
 	
 .PHONY: push
 push:
@@ -18,28 +20,29 @@ deploy:
 
 .PHONY: replace
 replace:
-	gcloud run services replace vault-server/service.yaml
+	gcloud run services replace infra/vault/service.yaml --region=asia-northeast1
 
 .PHONY: init
 init:
-	terraform -chdir=infra init
+	terraform -chdir=infra/${WORKSPACE} init
 
 .PHONY: fmt
-fmt: FLAGS ?=
 fmt:
-	terraform -chdir=infra fmt $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} fmt $(FLAGS)
 
 .PHONY: validate
-validate: FLAGS ?= 
 validate:
-	terraform -chdir=infra validate $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} validate $(FLAGS)
 
 .PHONY: plan
-plan: FLAGS ?=
 plan:
-	terraform -chdir=infra plan $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} plan $(FLAGS)
 
 .PHONY: apply
-apply: FLAGS ?=
 apply:
-	terraform -chdir=infra apply $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} apply $(FLAGS)
+
+.PHONY: import
+vault-import:
+	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
+	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal

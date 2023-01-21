@@ -9,7 +9,7 @@ resource "google_secret_manager_secret" "vault-server-config" {
 resource "google_secret_manager_secret_version" "vault-server-config" {
   secret = google_secret_manager_secret.vault-server-config.id
 
-  secret_data = file("./vault-server.hcl")
+  secret_data = file("./server.hcl")
 }
 
 resource "google_secret_manager_secret_iam_member" "vault-server-config" {
