@@ -81,7 +81,7 @@ cat .secrets/credentials.json | tr -s '\n' ' '
 
 ### Install required components and initialize Vault server
 ```
-make vault-apply
+WORKSPACE=ops make apply
 ```
 
 To update the cloud run service and get an URL, run the next commad:

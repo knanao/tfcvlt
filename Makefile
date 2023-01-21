@@ -1,5 +1,7 @@
 NAME := asia.gcr.io/knanao/vault
 VERSION := 1.12.2
+WORKSPACE ?= dev
+FLAGS ?=
 
 .PHONY: build
 build:
@@ -22,49 +24,25 @@ replace:
 
 .PHONY: init
 init:
-	terraform -chdir=infra init
+	terraform -chdir=infra/${WORKSPACE} init
 
 .PHONY: fmt
-fmt: FLAGS ?=
 fmt:
-	terraform -chdir=infra fmt $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} fmt $(FLAGS)
 
 .PHONY: validate
-validate: FLAGS ?= 
 validate:
-	terraform -chdir=infra validate $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} validate $(FLAGS)
 
 .PHONY: plan
-plan: FLAGS ?=
 plan:
-	terraform -chdir=infra plan $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} plan $(FLAGS)
 
 .PHONY: apply
-apply: FLAGS ?=
 apply:
-	terraform -chdir=infra apply $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} apply $(FLAGS)
 
-.PHONY: vault-init
-vault-init:
-	terraform -chdir=infra/vault init
-
-.PHONY: vault-import
-vault-import: FLAGS ?= -var-file=../terraform.tfvars
+.PHONY: import
 vault-import:
-	terraform -chdir=infra/vault import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
-	terraform -chdir=infra/vault import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal
-
-.PHONY: vault-plan
-vault-plan: FLAGS ?= -var-file=../terraform.tfvars
-vault-plan:
-	terraform -chdir=infra/vault plan $(FLAGS)
-
-.PHONY: vault-apply
-vault-apply: FLAGS ?= -var-file=../terraform.tfvars
-vault-apply: 
-	terraform -chdir=infra/vault apply $(FLAGS)
-
-.PHONY: vault-destroy
-vault-destroy: FLAGS ?= -var-file=../terraform.tfvars
-vault-destroy: 
-	terraform -chdir=infra/vault destroy $(FLAGS)
+	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
+	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal
