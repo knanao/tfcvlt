@@ -1,0 +1,51 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: vault-server
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '1'
+        autoscaling.knative.dev/maxScale: '1'
+        run.googleapis.com/cpu-throttling: 'false'
+    spec:
+      containerConcurrency: 50
+      timeoutSeconds: 300
+      serviceAccountName: vault-server@knanao.iam.gserviceaccount.com
+      containers:
+      - image: 'asia.gcr.io/knanao/vault:v1.12.2'
+        args:
+        - server
+        - '-config=/etc/vault/config.hcl'
+        ports:
+        - name: http1
+          containerPort: 8200
+        env:
+        - name: GOOGLE_PROJECT
+          value: knanao
+        - name: GOOGLE_STORAGE_BUCKET
+          value: knanao-vault-data
+        - name: SKIP_SETCAP
+          value: '1'
+        resources:
+          limits:
+            cpu: '2'
+            memory: 2G
+        volumeMounts:
+        - name: vault-server-config-quq-hum-noy
+          readOnly: true
+          mountPath: /etc/vault
+      volumes:
+      - name: vault-server-config-quq-hum-noy
+        secret:
+          secretName: vault-server-config
+          items:
+          - key: latest
+            path: config.hcl
+  traffic:
+  - percent: 100
+    latestRevision: true

@@ -9,3 +9,6 @@
 
 # ds store
 .DS_Store
+
+# secret
+.secrets
