@@ -3,7 +3,7 @@ terraform {
     organization = "knanao"
 
     workspaces {
-      name = "test"
+      name = "ops"
     }
   }
 
