@@ -130,7 +130,7 @@ vault write auth/approle/role/terraform \
   token_num_uses=0 \
   token_ttl=0 \
   token_max_ttl=0 \
-  secret_id_num_uses=0
+  secret_id_num_uses=0 \
   policies=terraform
 ```
 
@@ -146,4 +146,14 @@ vault write -f auth/approle/role/terraform/secret-id num_uses=0 ttl=0
 ```
 And save `secret_id` as Terraform Cloud variable, `login_approle_secret_id` as a sensitive value.
 
-### 
+### Provision resources using dynamic credentials
+Before running this command, please uncomment google provider and a storage resource.
+Let's create a gcs with dynamic credentials.
+```
+make apply
+```
+
+### Clean Up
+```
+make cleanup
+```

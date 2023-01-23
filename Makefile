@@ -43,6 +43,11 @@ apply:
 	terraform -chdir=infra/${WORKSPACE} apply $(FLAGS)
 
 .PHONY: import
-vault-import:
+import:
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal
+
+.PHONY: cleanup
+cleanup:
+	terraform -chdir=infra/dev destroy $(FLAGS)
+	terraform -chdir=infra/ops destroy $(FLAGS)
