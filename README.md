@@ -74,12 +74,13 @@ gcloud iam service-accounts keys create .secrets/credentials.json \
 ```
 
 Place your credentials in a Terraform Cloud environment variable, `GOOGLE_CREDENTIALS` as Sensitive.
-After that, Please delete your local credential file.
+After that, please delete your local credential file.
 ```
 cat .secrets/credentials.json | tr -s '\n' ' '
 ```
 
 ### Install required components and initialize Vault server
+Before running the below command, please update `gcp_project` in the terraform.tfvars each `dev` and `ops` dirs.
 ```
 WORKSPACE=ops make apply
 ```
