@@ -1,6 +1,8 @@
 resource "google_storage_bucket" "vault-data" {
   name     = "${var.gcp_project}-vault-data"
   location = var.gcp_region
+
+  force_destroy = true
 }
 
 resource "google_storage_bucket_iam_member" "vault-data" {

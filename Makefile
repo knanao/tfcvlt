@@ -47,7 +47,14 @@ import:
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal
 
+.PHONY: destroy
+destory:
+	terraform -chdir=infra/${WORKSPACE} destroy
+	@echo Please delete the ${WORKSPACE} workspace from Terraform Cloud.
+
 .PHONY: cleanup
+cleanup: destroy
+cleanup: WORKSPACE=ops
+cleanup: destory
 cleanup:
-	terraform -chdir=infra/dev destroy $(FLAGS)
-	terraform -chdir=infra/ops destroy $(FLAGS)
+	@echo Done!
