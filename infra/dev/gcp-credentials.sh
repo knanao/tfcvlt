@@ -1,8 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -e
 
-credentials=$(echo $1 | sed 's/\"//g')
-sleep $2
+eval "$(jq -r '@sh "CREDENTIALS=\(.credentials)"')"
 
-echo "{\"credentials\":\"${credentials}\"}" | jq .
+VAL="${CREDENTIALS}"
+
+sleep 5
+
+jq -n --arg val "${VAL}" '{"credentials":$val}'

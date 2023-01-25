@@ -82,7 +82,13 @@ cat .secrets/credentials.json | tr -s '\n' ' '
 ### Install required components and initialize Vault server
 Before running the below command, please update `gcp_project` in the terraform.tfvars each `dev` and `ops` dirs.
 ```
+WORKSPACE=ops make init
 WORKSPACE=ops make apply
+```
+
+If Cloud KMS's key ring already exists, run the import command and retry the above command:
+```
+make import
 ```
 
 To update the cloud run service and get an URL, run the next commad:
@@ -90,9 +96,17 @@ To update the cloud run service and get an URL, run the next commad:
 make replace
 ```
 
+Export the URL as a `VAULT_ADDR` and use curl to retrieve the status of the Vault server:
+```
+curl -s -X GET ${VAULT_ADDR}/v1/sys/seal-status -H "Authorization: Bearer $(gcloud auth print-identity-token)" | jq .
+```
+
 After installing required components, initialize Vault server.
 ```
-vault operator init
+curl -s -X PUT \
+  ${VAULT_ADDR}/v1/sys/init \
+  -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+  --data @payload.json | jq .
 ```
 
 Make Vault server public to access to it from Terraform Cloud.
@@ -103,9 +117,14 @@ gcloud run services add-iam-policy-binding vault-server \
   --region=asia-northeast1
 ```
 
-Save the URL to Terraform Cloud environment variable, `VAULT_ADDR` as a sensitive value.
+To create `dev` workspace, run the command:
 ```
-export VAULT_ADDR=__VAULR_ADDR__
+make init
+```
+
+Save the URL to Terraform Cloud environment variable at `dev` workspace, `VAULT_ADDR` as a sensitive value.
+And export the Vault's root token:
+```
 export VAULT_TOKEN=__ROOT_TOKEN__
 ```
 
@@ -116,7 +135,7 @@ vault status
 ### Logs into Vault using the AppRole auth backend
 To create a new policy in Vault:
 ```
-vault policy write terraform infra/terraform-policy.hcl
+vault policy write terraform infra/dev/terraform-policy.hcl
 ```
 
 Enable the AppRole auth method:
@@ -146,6 +165,11 @@ Get a SecretID issued against the AppRole:
 vault write -f auth/approle/role/terraform/secret-id num_uses=0 ttl=0
 ```
 And save `secret_id` as Terraform Cloud variable, `login_approle_secret_id` as a sensitive value.
+
+Finally, configure a secret engine to crete a dynamic secret:
+```
+make apply
+```
 
 ### Provision resources using dynamic credentials
 Before running this command, please uncomment [google provider](https://github.com/knanao/tfcvlt/blob/main/infra/dev/provider.tf) and [a storage resource](https://github.com/knanao/tfcvlt/blob/main/infra/dev/storage.tf).\
