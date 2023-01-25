@@ -20,7 +20,7 @@ deploy:
 
 .PHONY: replace
 replace:
-	gcloud run services replace infra/vault/service.yaml --region=asia-northeast1
+	gcloud run services replace infra/ops/service.yaml --region=asia-northeast1
 
 .PHONY: init
 init:
@@ -43,6 +43,7 @@ apply:
 	terraform -chdir=infra/${WORKSPACE} apply $(FLAGS)
 
 .PHONY: import
+import: WORKSPACE=ops
 import:
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_key_ring.vault-server global/vault-server
 	terraform -chdir=infra/${WORKSPACE} import ${FLAGS} google_kms_crypto_key.vault-seal global/vault-server/vault-seal
@@ -57,4 +58,5 @@ cleanup: destroy
 cleanup: WORKSPACE=ops
 cleanup: destory
 cleanup:
+	gcloud run services delete vault-server --region=asia-northeast1
 	@echo Done!
