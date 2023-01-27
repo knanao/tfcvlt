@@ -73,7 +73,12 @@ gcloud iam service-accounts keys create .secrets/credentials.json \
     --iam-account=terraform@knanao.iam.gserviceaccount.com
 ```
 
-Place your credentials in a Terraform Cloud environment variable, `GOOGLE_CREDENTIALS` as Sensitive.
+To create `ops` workspace, run the command:
+```
+WORKSPACE=ops make init
+```
+
+Place your credentials in a Terraform Cloud environment variable at `ops` workspace,, `GOOGLE_CREDENTIALS` as Sensitive.
 After that, please delete your local credential file.
 ```
 cat .secrets/credentials.json | tr -s '\n' ' '
@@ -82,7 +87,6 @@ cat .secrets/credentials.json | tr -s '\n' ' '
 ### Install required components and initialize Vault server
 Before running the below command, please update `gcp_project` in the terraform.tfvars each `dev` and `ops` dirs.
 ```
-WORKSPACE=ops make init
 WORKSPACE=ops make apply
 ```
 
