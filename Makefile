@@ -59,7 +59,6 @@ destroy-ops: WORKSPACE=ops
 destroy-ops: destroy
 
 .PHONY: cleanup
-cleanup: destroy
 cleanup: destroy-ops
 cleanup:
 	gcloud run services delete vault-server --region=asia-northeast1

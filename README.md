@@ -79,7 +79,7 @@ To create `ops` workspace, run the command:
 WORKSPACE=ops make init
 ```
 
-Place your credentials in a Terraform Cloud environment variable at `ops` workspace,, `GOOGLE_CREDENTIALS` as Sensitive.
+Place your credentials in a Terraform Cloud environment variable at `ops` workspace, `GOOGLE_CREDENTIALS` as Sensitive.
 After that, please delete your local credential file.
 ```
 cat .secrets/credentials.json | tr -s '\n' ' '
@@ -122,11 +122,6 @@ gcloud run services add-iam-policy-binding vault-server \
 --region=asia-northeast1
 ```
 
-To create `dev` workspace, run the command:
-```
-make init
-```
-
 Save the URL to Terraform Cloud environment variable at `dev` workspace, `VAULT_ADDR` as a sensitive value.
 And export the Vault's root token:
 ```
@@ -137,6 +132,12 @@ You can check Vault's status, If something is wrong, please re-check the env val
 ```
 vault status
 ```
+
+To create `dev` workspace, run the command:
+```
+make init
+```
+
 ### Logs into Vault using the AppRole auth backend
 To create a new policy in Vault:
 ```
@@ -185,13 +186,14 @@ make apply
 
 ### Clean Up
 ```
+make destroy
 make cleanup
 ```
 
 ### Debug
 To check the dynamic key, run the command:
 ```
-watch -n 1 iam service-accounts keys list --iam-account=vaultterraform-__UUID__@knanao.iam.gserviceaccount.com
+watch -n 1 gcloud iam service-accounts keys list --iam-account=vaultterraform-__ULID__@knanao.iam.gserviceaccount.com
 ```
 
 To retrive the `lease_id`, run the command:
