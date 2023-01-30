@@ -47,12 +47,13 @@ To perform the next steps, you need to have:
 ## Demonstration
 ### Enable required APIs
 ```
-gcloud services enable --async \
-  cloudkms.googleapis.com \
-  run.googleapis.com \
-  secretmanager.googleapis.com \
-  storage.googleapis.com \
-  iam.googleapis.com
+gcloud services enable \
+--async \
+cloudkms.googleapis.com \
+run.googleapis.com \
+secretmanager.googleapis.com \
+storage.googleapis.com \
+iam.googleapis.com
 ```
 
 ### Create a short-lived service account to provision Vault server
@@ -70,7 +71,7 @@ gcloud projects add-iam-policy-binding knanao \
 To create service account key, run the next command:
 ```
 gcloud iam service-accounts keys create .secrets/credentials.json \
-    --iam-account=terraform@knanao.iam.gserviceaccount.com
+--iam-account=terraform@knanao.iam.gserviceaccount.com
 ```
 
 To create `ops` workspace, run the command:
@@ -78,7 +79,7 @@ To create `ops` workspace, run the command:
 WORKSPACE=ops make init
 ```
 
-Place your credentials in a Terraform Cloud environment variable at `ops` workspace,, `GOOGLE_CREDENTIALS` as Sensitive.
+Place your credentials in a Terraform Cloud environment variable at `ops` workspace, `GOOGLE_CREDENTIALS` as Sensitive.
 After that, please delete your local credential file.
 ```
 cat .secrets/credentials.json | tr -s '\n' ' '
@@ -116,14 +117,9 @@ curl -s -X PUT \
 Make Vault server public to access to it from Terraform Cloud.
 ```
 gcloud run services add-iam-policy-binding vault-server \
-  --member="allUsers" \
-  --role="roles/run.invoker" \
-  --region=asia-northeast1
-```
-
-To create `dev` workspace, run the command:
-```
-make init
+--member="allUsers" \
+--role="roles/run.invoker" \
+--region=asia-northeast1
 ```
 
 Save the URL to Terraform Cloud environment variable at `dev` workspace, `VAULT_ADDR` as a sensitive value.
@@ -136,6 +132,12 @@ You can check Vault's status, If something is wrong, please re-check the env val
 ```
 vault status
 ```
+
+To create `dev` workspace, run the command:
+```
+make init
+```
+
 ### Logs into Vault using the AppRole auth backend
 To create a new policy in Vault:
 ```
@@ -150,12 +152,12 @@ vault auth enable approle
 Create a named role:
 ```
 vault write auth/approle/role/terraform \ 
-  secret_id_ttl=0 \
-  token_num_uses=0 \
-  token_ttl=0 \
-  token_max_ttl=0 \
-  secret_id_num_uses=0 \
-  policies=terraform
+secret_id_ttl=0 \
+token_num_uses=0 \
+token_ttl=0 \
+token_max_ttl=0 \
+secret_id_num_uses=0 \
+policies=terraform
 ```
 
 Fetch the RoleID of the AppRole:
@@ -184,5 +186,22 @@ make apply
 
 ### Clean Up
 ```
+make destroy
 make cleanup
+```
+
+### Debug
+To check the dynamic key, run the command:
+```
+watch -n 1 gcloud iam service-accounts keys list --iam-account=vaultterraform-__ULID__@knanao.iam.gserviceaccount.com
+```
+
+To retrive the `lease_id`, run the command:
+```
+vault read gcp/roleset/terraform/key
+```
+
+To revoke the key manually, run the command:
+```
+vault lease revoke -sync gcp/roleset/terraform/key/__LEASE_ID__
 ```

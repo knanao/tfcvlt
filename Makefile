@@ -1,6 +1,7 @@
 NAME := asia.gcr.io/knanao/vault
 VERSION := 1.12.2
 WORKSPACE ?= dev
+GCP_PROJECT ?= knanao
 FLAGS ?=
 
 .PHONY: build
@@ -58,7 +59,9 @@ destroy-ops: WORKSPACE=ops
 destroy-ops: destroy
 
 .PHONY: cleanup
-cleanup: destroy destroy-ops
+cleanup: destroy-ops
 cleanup:
 	gcloud run services delete vault-server --region=asia-northeast1
+	gcloud projects remove-iam-policy-binding ${GCP_PROJECT} --member="serviceAccount:terraform@${GCP_PROJECT}.iam.gserviceaccount.com" --role="roles/owner"
+	gcloud iam service-accounts delete terraform@${GCP_PROJECT}.iam.gserviceaccount.com
 	@echo Done!
