@@ -1,4 +1,7 @@
-resource "vault_gcp_secret_backend" "gcp" {}
+resource "vault_gcp_secret_backend" "gcp" {
+  #default_lease_ttl_seconds = 60
+  #max_lease_ttl_seconds     = 120
+}
 
 resource "vault_gcp_secret_roleset" "terraform" {
   backend     = vault_gcp_secret_backend.gcp.path
